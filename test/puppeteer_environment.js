@@ -3,6 +3,7 @@ const puppeteer = require("puppeteer");
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
+const DIR = path.join(os.tmpdir(), 'jest_puppeteer_global_setup')
 
 class PuppeteerEnvironment extends NodeEnvironment {
   constructor(config) {
@@ -10,7 +11,7 @@ class PuppeteerEnvironment extends NodeEnvironment {
   }
 
   setup() {
-    super
+    return super
       .setup()
       .then(() => {
         // get the wsEndpoint
@@ -21,8 +22,9 @@ class PuppeteerEnvironment extends NodeEnvironment {
         if (!wsEndpoint) {
           throw new Error("wsEndpoint not found");
         }
+        return wsEndpoint;
       })
-      .then(() => {
+      .then(wsEndpoint => {
         // connect to puppeteer
         return puppeteer.connect({
           browserWSEndpoint: wsEndpoint
